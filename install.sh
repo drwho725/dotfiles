@@ -12,3 +12,4 @@ mkdir ~/.config/vim/bundle 2>/dev/null
 git clone https://github.com/gmarik/Vundle.vim.git ~/.config/vim/bundle/Vundle.vim
 vim +PluginInstall +qa
 
+echo "Run install_codesearch then open vim and run :BundleInstall"

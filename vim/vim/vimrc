@@ -1,0 +1,516 @@
+" vim: ts=4 sts=4 sw=4 et ai
+
+set nocompatible
+filetype off
+
+" Vundle start
+
+python import sys; from vim import command; command("let python_version = '%s'" % sys.version[2:3])
+
+if python_version < 6
+    let g:airline_powerline_fonts=1
+    let g:airline_enable_hunks=0
+endif
+
+let g:delimitMate_excluded_ft = 'scss'
+
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+Plugin 'gmarik/Vundle.vim'
+Plugin 'tpope/vim-fugitive'
+Plugin 'tomtom/tcomment_vim'
+Plugin 'godlygeek/tabular'
+Plugin 'Smart-Home-Key'
+Plugin 'matchit.zip'
+Plugin 'SirVer/ultisnips'
+Plugin 'wincent/command-t'
+Plugin 'pangloss/vim-javascript'
+Plugin 'dag/vim-fish'
+Plugin 'JulesWang/css.vim'
+Plugin 'cakebaker/scss-syntax.vim'
+Plugin 'evidens/vim-twig'
+Plugin 'tokutake/twig-indent'
+" Plugin 'jsoriano/vim-dbgp'
+" Plugin 'joonty/vdebug'
+Plugin 'tacahiroy/vim-bestfriend'
+Plugin 'Raimondi/delimitMate'
+Plugin 'scrooloose/syntastic'
+Plugin 'mileszs/ack.vim'
+Plugin 'airblade/vim-gitgutter'
+Plugin 'tpope/vim-obsession'
+Plugin 'terryma/vim-multiple-cursors'
+Plugin 'ap/vim-css-color'
+Plugin 'christoomey/vim-tmux-navigator'
+Plugin 'guns/xterm-color-table.vim'
+" Plugin 'Rykka/colorv.vim'
+" Plugin 'Rykka/galaxy.vim'
+Plugin 'Shougo/unite.vim'
+if filereadable($HOME.'/.csearchindex')
+    Plugin 'brandonbloom/csearch.vim'
+    Plugin 'junkblocker/unite-codesearch'
+endif
+
+
+if python_version > 5
+    Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+elseif version >= 720
+    Plugin 'bling/vim-airline'
+endif
+
+call vundle#end()
+
+" Vundle end
+
+if &term =~ '^screen'
+    " tmux will send xterm-style keys when its xterm-keys option is on
+    execute "set <xUp>=\e[1;*A"
+    execute "set <xDown>=\e[1;*B"
+    execute "set <xRight>=\e[1;*C"
+    execute "set <xLeft>=\e[1;*D"
+endif
+
+if &shell =~# 'fish$'
+    set shell=sh
+endif
+
+set autowrite
+set backspace=indent,eol,start
+set backupcopy=no
+set history=50
+set hlsearch
+set incsearch
+set laststatus=2
+set list
+set listchars=tab:>-,trail:-
+if has("mouse")
+    set mouse=a
+endif
+set nobackup
+set nocindent
+set noignorecase
+set number
+set ruler
+set scrolloff=5
+set sessionoptions=blank,buffers,curdir,folds,help,options,tabpages,winsize
+set shell=/bin/bash
+set showcmd
+set showmatch
+set showmode
+set showtabline=2
+set splitright
+set textwidth=0
+set t_ut=
+set title
+set viminfo='20,\"50
+
+set autoindent
+set expandtab
+set smarttab
+
+set shiftwidth=4
+set softtabstop=4
+set tabstop=4
+
+set wildmenu
+set wildignore+=.git/*,.hg/*,.svn/*,*.orig          " version control
+set wildignore+=._*,.DS_Store                       " OSX nonsense
+set wildignore+=*.aux,*.out,*.toc                   " LaTeX intermediate files
+set wildignore+=*.jpg,*.bmp,*.gif,*.png,*.jpeg      " binary images
+set wildignore+=*.o,*.obj,*.exe,*.dll,*.manifest    " compiled object files
+set wildignore+=*.spl,.sw?,.py?                     " more binary stuff
+
+" Suffixes that get lower priority when doing tab completion for filenames.
+" These are files we are not likely to want to edit or read.
+set suffixes=.bak,~,.o,.info,.log,.dvi,.bbl,.blg,.brf,.cb,.ind,.idx,.ilg,.inx
+
+syntax on
+set background=dark
+colorscheme mycolors
+
+if has("autocmd")
+    filetype plugin on
+    filetype indent on
+    let php_folding=1
+    au BufEnter Debugger* setlocal scrolloff=0
+endif
+
+" Highlight conflict markers
+match ErrorMsg '^\(<\|=\|>\)\{7\}\([^=].\+\)\?$'
+
+function! AirlineInit()
+    if (exists('g:loaded_airline') && g:loaded_airline)
+        let spc = g:airline_symbols.space
+        call airline#parts#define_raw('linenr', '%{g:airline_symbols.linenr}%#__accent_bold#%4l/%L %#__restore__#')
+        let g:airline_section_a = airline#section#create_left(['mode', 'paste', 'capslock', 'iminsert'])
+        let g:airline_section_b = airline#section#create(['branch'])
+        let g:airline_section_c = airline#section#create(['%<', 'file', spc, 'readonly'])
+        let g:airline_section_gutter = airline#section#create(['%='])
+        let g:airline_section_x = airline#section#create_right(['tagbar', 'filetype'])
+        let g:airline_section_y = airline#section#create_right(['ffenc'])
+        let g:airline_section_z = airline#section#create(['linenr', ':%3c '])
+        let g:airline_section_warning = airline#section#create(['syntastic'])
+    endif
+endfunction
+autocmd VimEnter * call AirlineInit()
+
+" highlight User1 ctermbg=233 ctermfg=240
+
+set statusline=
+set statusline+=%f                              " Path
+set statusline+=%m                              " Modified flag
+set statusline+=%r                              " Readonly flag
+set statusline+=%w                              " Preview window flag
+if exists("*SyntasticStatuslineFlag")
+    set statusline+=\                               " Space
+    set statusline+=%{SyntasticStatuslineFlag()}    " Syntastic info
+endif
+set statusline+=%=                              " Right align
+if exists("fugitive#statusline")
+    set statusline+=%{fugitive#statusline()}        " Fugitive info
+    set statusline+=\                               " Space
+endif
+set statusline+=(                               " (
+set statusline+=%{&ff}                          " Format (unix/dos)
+set statusline+=/                               " /
+set statusline+=%{strlen(&fenc)?&fenc:&enc}     " Encoding (utf-8)
+set statusline+=/                               " /
+set statusline+=%{strlen(&ft)?&ft:'none'}       " Type (python)
+set statusline+=)                               " )
+set statusline+=\ (line\ %l\/%L,\ col\ %03c)    " Line and column position and counts.
+
+function! GetSyntaxID()
+    return synIDtrans(synID(line('.'), col('.'), 1))
+endfunction
+
+function! GetSyntax()
+    exec "hi ".synIDattr(GetSyntaxID(), 'name')
+endfunction
+
+if &term == "screen" || &term == "screen-256color"
+    set t_ts=k
+    set t_fs=\
+    set ttymouse=xterm2
+endif
+
+if has("mouse_sgr")
+    set ttymouse=sgr
+else
+    set ttymouse=xterm2
+end
+
+" Set window title to same as statusline
+" let &titlestring=&statusline
+
+" We know xterm-debian is a color terminal
+if &term =~ "xterm-debian" || &term =~ "xterm-xfree86"
+    set t_Co=16
+    set t_Sf=[3%dm
+    set t_Sb=[4%dm
+endif
+
+
+"" Keybinds
+
+let mapleader=","
+nmap ; :
+xmap ; :
+
+" Easier diffget
+if &diff
+    nnoremap <Leader>d[ :diffget 1
+    nnoremap <Leader>d] :diffget 3
+endif
+
+" // clears search highlight
+nnoremap <silent> // :noh<CR>
+
+" Space toggles folds
+nnoremap <Space> za
+xnoremap <Space> za
+
+" C-n toggles line numbers
+nnoremap <silent> <C-n> :set invnumber<CR>
+
+" z0 = recursively open top-level fold we're in
+nnoremap z0 zCz0
+
+" Tab indenting
+nnoremap <Tab> >>
+nnoremap <S-Tab> <<
+
+xnoremap <Tab> >gv
+xnoremap <S-Tab> <gv
+
+" Quick word jumping with Ctrl+Arrows
+inoremap <silent> <Esc>[A <C-o>{
+inoremap <silent> <Esc>[B <C-o>}
+inoremap <Esc>[C <S-Right>
+inoremap <Esc>[D <S-Left>
+
+nnoremap <Esc>[A {
+nnoremap <Esc>[B }
+nnoremap <Esc>[C <S-Right>
+nnoremap <Esc>[D <S-Left>
+
+" Tab movement keys
+nnoremap <silent> <Esc><Right> :tabn<CR>
+nnoremap <silent> <Esc><Left> :tabp<CR>
+
+" Change Y to copy from current character to end of line
+" (mimic y0's behavior but backwards)
+noremap Y y$
+
+" Make p in Visual mode replace the selected text with the "" register.
+xnoremap p "_dP
+xnoremap P "_dP
+
+" Disable man key
+nnoremap K <nop>
+
+" Use ,d (or ,dd or ,dj or 20,dd) to delete a line without adding it to the
+" yanked stack (also, in visual mode)
+nnoremap <silent> <leader>d "_d
+xnoremap <silent> <leader>d "_d
+
+" Save session
+noremap <silent> <F8> :wa <Bar> mksession! ~/.vim/session <Bar> echo "Saved session"<CR>
+noremap <silent> <F9> :source ~/.vim/session<CR>
+
+" Ctrl+S to save
+nmap <C-s> :write!<CR>
+imap <C-s> <C-o>:write!<CR>
+
+" Remove annoying default Ctrl+B behavior
+nmap <C-b> <nop>
+imap <C-b> <nop>
+
+" :w!! = write a file as sudo
+cmap W!! w !sudo tee % > /dev/null
+
+" Map _$ to trim whitespace on the end of lines
+function! Preserve(command)
+    let _s=@/
+    let l = line(".")
+    let c = col(".")
+    execute a:command
+    let @/=_s
+    call cursor(l, c)
+endfun
+
+nmap <silent> _$ :call Preserve("%s/\\s\\+$//e")<CR><C-l>
+
+" Fix keys over some SSH connections
+inoremap <Esc>Oq 1
+inoremap <Esc>Or 2
+inoremap <Esc>Os 3
+inoremap <Esc>Ot 4
+inoremap <Esc>Ou 5
+inoremap <Esc>Ov 6
+inoremap <Esc>Ow 7
+inoremap <Esc>Ox 8
+inoremap <Esc>Oy 9
+inoremap <Esc>Op 0
+inoremap <Esc>On .
+inoremap <Esc>OR *
+inoremap <Esc>OQ /
+inoremap <Esc>Ol +
+inoremap <Esc>OS -
+
+noremap <Esc>OA <Up>
+noremap <Esc>OB <Down>
+
+noremap  <Esc>[1~ <Home>
+cnoremap <Esc>[1~ <Home>
+
+noremap  <Esc>[4~ <End>
+cnoremap <Esc>[4~ <End>
+inoremap <Esc>[4~ <End>
+
+"" Auto Commands
+
+" Resize splits when the window is resized
+au VimResized * exe "normal! \<c-w>="
+
+" Special vb template bind
+au BufNewFile,BufRead */templates/*.html call s:template_binds()
+function! s:template_binds()
+    let tmux=$TMUX
+    if tmux =~# "tmux"
+        setlocal makeprg=tmux\ split-window\ -v\ -p\ 5\ \"php\ ~/bin/update_templates.php\ %:p\ ;\ sleep\ 1\";tmux\ select-pane\ -U
+        nmap <buffer> <C-b> :silent make!\|redraw!<CR>
+        imap <buffer> <C-b> <C-o>:silent make!\|redraw!<CR>
+    else
+        setlocal makeprg=clear;php\ ~/bin/update_templates.php\ %:p
+        nmap <buffer> <C-b> :make!<CR>
+        imap <buffer> <C-b> <C-o>:make!<CR>
+    endif
+endfun
+
+au BufNewFile,BufRead *.twig call s:twig_settings()
+function! s:twig_settings()
+    setlocal tabstop=2
+    setlocal softtabstop=2
+    setlocal shiftwidth=2
+    setlocal textwidth=0
+    let tmux=$TMUX
+    if tmux =~# "tmux"
+        setlocal makeprg=tmux\ split-window\ -v\ -p\ 5\ \"~/html/slickdeals/sdincludes/twig/compile_template.php\ %:p\ ;\ sleep\ 1\";tmux\ select-pane\ -U
+        nmap <buffer> <C-b> :silent make!\|redraw!<CR>
+        imap <buffer> <C-b> <C-o>:silent make!\|redraw!<CR>
+    else
+        setlocal makeprg=clear;php\ ~/html/slickdeals/sdincludes/twig/compile_template.php\ %:p
+        nmap <buffer> <C-b> :make!<CR>
+        imap <buffer> <C-b> <C-o>:make!<CR>
+    endif
+endfun
+
+au BufNewFile,BufRead *.html call s:html_settings()
+function! s:html_settings()
+    setlocal tabstop=2
+    setlocal softtabstop=2
+    setlocal shiftwidth=2
+    setlocal textwidth=0
+endfun
+
+au BufNewFile,BufRead *.php call s:php_binds()
+function! s:php_binds()
+    setlocal makeprg=clear;php\ -f\ %:p
+    nmap <buffer> <C-b> :make!<CR>
+    imap <buffer> <C-b> <C-o>:make!<CR>
+endfun
+
+function! ResCur()
+  if line("'\"") <= line("$")
+    normal! g`"
+    return 1
+  endif
+endfunction
+
+augroup resCur
+  autocmd!
+  autocmd BufRead * call ResCur()
+augroup END
+
+""" Custom Commands
+
+command! FixBraces call RunFixBraces()
+function! RunFixBraces()
+    call Preserve("%s/\\(\\S\\)\\s*{$/\\1\\r{/")
+endfun
+
+command! CodingStandards call RunCodingStandards()
+function! RunCodingStandards()
+    retab
+    call Preserve("%s/\\Cif(/if (/e")
+    call Preserve("%s/\\C}\\s*else/}\\relse/e")
+    call Preserve("%s/\\Cfor(/for (/e")
+    call Preserve("%s/\\Cswitch(/switch (/e")
+    call Preserve("%s/\\Cforeach(/foreach (/e")
+    call Preserve("%s/\\Cwhile(/while (/e")
+    call Preserve("%s/\\Ccatch(/catch (/e")
+    call Preserve("%s/\\s\\+$//e")
+    call Preserve("%s/TRUE/true/g")
+    call Preserve("%s/FALSE/false/g")
+    call Preserve("%s/NULL/null/g")
+    call Preserve("g/foreach/s/AS/as/")
+    call Preserve("v/./,/./-j")
+    nohlsearch
+endfun
+
+
+""" Plugins
+
+" New JS/HTML indenting
+let g:html_indent_inctags = "html,body,head,tbody"
+let g:html_indent_script1 = "inc"
+let g:html_indent_style1  = "inc"
+
+" SuperTab
+" let b:SuperTabDisabled=1
+" set completeopt=menuone,longest
+" let g:SuperTabLongestEnhanced = 1
+" let g:SuperTabLongestHighlight = 1
+" let g:SuperTabDefaultCompletionType = "<c-x><c-o>"
+" let g:SuperTabContextDefaultCompletionType = "<c-x><c-o>"
+
+" SmartHome
+noremap  <silent> [1~ :SmartHomeKey<CR>
+inoremap <silent> [1~ <C-o>:SmartHomeKey<CR>
+
+" Syntastic
+let g:syntastic_enable_signs=1
+
+" TComment
+let g:tcommentGuessFileType_php = 'php'
+let g:tcommentMapLeader1 = ''
+let g:tcommentMapLeader2 = ''
+let g:tcommentMapLeaderOp1 = ''
+let g:tcommentMapLeaderOp2 = ''
+nmap <silent> C :TComment<CR>
+xmap <silent> C :TComment<CR>
+
+" Tabularize
+nmap <silent> `= :Tabularize /^[^=]\+\zs=[&>]\?<CR>
+xmap <silent> `= :Tabularize /^[^=]\+\zs=[&>]\?<CR>
+nmap <silent> `; :Tabularize /^[^:]\+\zs:<CR>
+xmap <silent> `; :Tabularize /^[^:]\+\zs:<CR>
+nmap <silent> `4 :Tabularize /^[^\$]\+\zs\$\S\+<CR>
+xmap <silent> `4 :Tabularize /^[^\$]\+\zs\$\S\+<CR>
+nmap <silent> <Leader>t= :Tabularize /^[^=]\+\zs=[&>]\?<CR>
+xmap <silent> <Leader>t= :Tabularize /^[^=]\+\zs=[&>]\?<CR>
+nmap <silent> <Leader>t: :Tabularize /^[^:]\+\zs:<CR>
+xmap <silent> <Leader>t: :Tabularize /^[^:]\+\zs:<CR>
+
+" UltiSnips
+let g:UltiSnipsExpandTrigger       = "<tab>"
+let g:UltiSnipsJumpForwardTrigger  = "<tab>"
+let g:UltiSnipsJumpBackwardTrigger = "<s-tab>"
+
+" Unite codesearch
+nnoremap <silent> <Esc>f :Unite codesearch<CR>
+nnoremap <silent> <Esc>g :exec "Unite -input=".expand("<cword>")." codesearch"<CR>
+
+let g:unite_enable_start_insert        = 1
+let g:unite_split_rule                 = "botright"
+let g:unite_force_overwrite_statusline = 0
+let g:unite_winheight                  = 30
+
+call unite#custom#default_action('file', 'tabopen')
+
+" CommandT
+nnoremap <silent> <Esc>t :CommandT ~/html/<CR>
+
+let g:CommandTAcceptSelectionMap    = "<C-t>"
+let g:CommandTAcceptSelectionTabMap = "<CR>"
+let g:CommandTWildIgnore            = &wildignore
+    \ . ",**/bower_components/*"
+    \ . ",**/node_modules/*"
+    \ . ",**/vendor/*"
+    \ . ",**/trac/*"
+    \ . ",**/blog/*"
+    \ . ",**/bootstrap_assets/*"
+    \ . ",**/external_libraries/*"
+    \ . ",**/googleapi/*"
+    \ . ",**/xhprof/*"
+    \ . ",**/node.js/*"
+    \ . ",**/SD1.0/*"
+    \ . ",**/WAP1.0/*"
+    \ . ",**/Hybrid/Classic/*"
+    \ . ",**/Hybrid/Tablet/*"
+    \ . ",**/Hybrid/Ice/*"
+    \ . ",**/Hybrid/Midnight/*"
+
+" PHP-QA
+" let g:phpqa_codesniffer_cmd      = "/home/collin/pear/phpcs"
+" let g:phpqa_messdetector_cmd     = "/home/collin/pear/phpmd"
+" let g:phpqa_codesniffer_autorun  = 0
+" let g:phpqa_messdetector_autorun = 0
+" let g:phpqa_codesniffer_args     = "--standard=Slickdeals"
+
+cs add ~/.cscope/cscope.out
+set cspc=3
+
+if filereadable($HOME."/.config/vim/localrc")
+    source ~/.config/vim/localrc
+endif
