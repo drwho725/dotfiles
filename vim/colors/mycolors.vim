@@ -14,6 +14,7 @@ hi StatusLine               ctermfg=244 ctermbg=233 cterm=none
 hi StatusLineNC             ctermfg=244 ctermbg=0   cterm=none
 hi VertSplit                ctermfg=24  ctermbg=0   cterm=none
 hi LineNr                   ctermfg=240 ctermbg=233 cterm=none
+hi SpecialKey               ctermfg=240
 
 hi TabLine                  ctermfg=255 ctermbg=24  cterm=none
 hi TabLineSel               ctermfg=255 ctermbg=0   cterm=none
@@ -26,7 +27,7 @@ hi GitGutterDelete          ctermfg=124 ctermbg=232
 hi GitGutterChange          ctermfg=142 ctermbg=232
 hi GitGutterChangeDelete    ctermfg=208 ctermbg=232
 
-hi Pmenu                    ctermfg=7   ctermbg=13
+hi Pmenu                    ctermfg=7   ctermbg=236
 hi PmenuSel                 ctermfg=231 ctermbg=23
 hi PmenuSbar                ctermbg=200
 hi PmenuThumb               cterm=reverse
@@ -54,7 +55,6 @@ hi Conceal                  ctermfg=7 ctermbg=242 guifg=LightGrey guibg=DarkGrey
 hi WildMenu                 term=standout ctermfg=0 ctermbg=11 guifg=Black guibg=Yellow
 hi Visual                   term=reverse ctermbg=242 guibg=DarkGrey
 
-hi SpecialKey               term=bold ctermfg=81 guifg=Cyan
 hi NonText                  term=bold ctermfg=12 gui=bold guifg=Blue
 hi Directory                term=bold ctermfg=159 guifg=Cyan
 hi Question                 term=standout ctermfg=121 gui=bold guifg=Green

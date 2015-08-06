@@ -8,9 +8,15 @@ if type -f dircolors > /dev/null
     eval (dircolors -c | sed 's/>&\/dev\/null$//')
 end
 
+if test -d /usr/local/rvm/rubies/ruby-2.1.2/lib
+    set -x LD_LIBRARY_PATH /usr/local/rvm/rubies/ruby-2.1.2/lib
+end
+
+set -x XDG_CONFIG_HOME ~/.config
+
 set -x POWERLINE_COMMAND ~/.config/vim/bundle/powerline/scripts/powerline-render
-set -x PYTHONPATH ~/.config/vim/bundle/powerline/
-~/.config/vim/bundle/powerline/scripts/powerline-daemon -q
+set -x PYTHONPATH ~/.config/vim/bundle/powerline/ ~/src/django-1.6.5
+~/.config/vim/bundle/powerline/scripts/powerline-daemon -q -p ~/.config/powerline
 
 set -x WHOIS_HIDE 1
 set EDITOR vim
@@ -19,6 +25,8 @@ for p in /opt/nodejs/bin ~/gocode/bin ~/bin
         set PATH $p $PATH
     end
 end
+
+set -x GOPATH ~/gocode/
 
 set -x GTAGSDBPATH ~/html/.git/gtags/
 set -x GTAGSROOT ~/html/
