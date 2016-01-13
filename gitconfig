@@ -1,5 +1,5 @@
 [core]
-    excludesfile = /home/collin/.gitignore
+    excludesfile = /home/saju/.gitignore
     autocrlf     = input
     safecrlf     = warn
     editor       = vim

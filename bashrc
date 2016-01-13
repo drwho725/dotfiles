@@ -49,7 +49,7 @@ if [ "$PS1" ]; then
     alias bc='bc -ql'
     alias edit='vim'
     alias cls='clear'
-    alias psme='ps auwx | grep cgrady'
+    alias psme='ps auwx | grep $(whoami)'
     alias rehash='source ~/.bashrc'
     alias aamp='mplayer -framedrop -vo aa'
 
