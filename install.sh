@@ -1,5 +1,7 @@
 #!/bin/bash
 
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
 ln -sf ~/.config/bashrc ~/.bashrc
 ln -sf ~/.config/bash_profile ~/.bash_profile
 ln -sf ~/.config/gitconfig ~/.gitconfig

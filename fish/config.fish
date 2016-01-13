@@ -38,6 +38,10 @@ set -x ACK_COLOR_MATCH "bold yellow"
 set -x PAGER vimpager
 set -x GIT_PAGER less
 
+set -x PATH /usr/local/mysql-5.6.26-osx10.8-x86_64/bin $PATH
+set -x PATH ~/Library/Enthought/Canopy_64bit/User/bin $PATH
+set -x PATH ~/scripts/ $PATH
+
 complete -f -c git -n '__fish_git_needs_command' -a get -d 'Checkout and switch to a branch'
 complete -f -c git -n '__fish_git_using_command get' -a '(__fish_git_branches)' --description 'Branch'
 complete -f -c git -n '__fish_git_needs_command' -a delbr -d 'Delete a branch from both local and remote repos'
